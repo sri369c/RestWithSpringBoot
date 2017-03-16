@@ -11,6 +11,10 @@ Retrieve file contents:
 http://localhost:8080/RestWithSpringBoot/getFileContent/{fileid}
 http://localhost:8080/RestWithSpringBoot/getFileContent/6a3a150f-035a-45cd-b067-654cc4c973c6
 
+File search:
+http://localhost:8080/RestWithSpringBoot/getFilesList/{full or partial name}
+http://localhost:8080/RestWithSpringBoot/getFilesList/von
+
 Database datafile save location: 
 F:/MyWork/h2db/h2database
 
