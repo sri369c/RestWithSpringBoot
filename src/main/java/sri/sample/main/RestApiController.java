@@ -3,6 +3,8 @@ package sri.sample.main;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -96,6 +98,26 @@ public class RestApiController
 
 		    InputStreamResource isr = new InputStreamResource(new FileInputStream(file));
 		    return new ResponseEntity<InputStreamResource>(isr, respHeaders, HttpStatus.OK);
+		}
+	}
+	
+	@RequestMapping(value = "/getFilesList/{fileName}", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<List<String>> getFilesList(@PathVariable("fileName") String fileName) throws FileNotFoundException
+	{
+		if (null == fileName || StringUtils.isEmpty(fileName.trim())) 
+			return null;
+		else
+		{
+			List<String> filesList = fileService.retrieveFilesList(fileName);
+			
+			if (null == filesList || filesList.isEmpty())
+			{
+				filesList = new ArrayList<String>(1);
+				filesList.add("No files found for the full/partial name provided.");
+				return new ResponseEntity<List<String>>(filesList, HttpStatus.NOT_FOUND);
+			}
+			return new ResponseEntity<List<String>>(filesList, HttpStatus.OK);
 		}
 	}
 }
