@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,6 @@ import sri.sample.dao.FileDao;
 import sri.sample.util.FileIdGenerator;
 import sri.sample.util.FileMetaDataCapture;
 import sri.sample.vo.FileInfo;
-import sri.sample.vo.FileMetaData;
 
 /**
  * @author Srinivas
@@ -31,9 +31,9 @@ public class FileService
 		return fileDao.retrieveFileInfo(fileId);
 	}
 	
-	public FileMetaData getFileMetaData(String fileId)
+	public List<String> retrieveFilesList(String fileName)
 	{
-		return fileDao.retrieveFileMetaData(fileId);
+		return fileDao.retrieveFilesList(fileName);
 	}
 	
 	public String saveFile(MultipartFile file, String fileUploadPath)
