@@ -1,0 +1,18 @@
+URLS:
+
+File upload:
+http://localhost:8080/RestWithSpringBoot/upload.jsp
+
+Retrieve file info, including meta info:
+http://localhost:8080/RestWithSpringBoot/getFileInfo/{fileid}
+http://localhost:8080/RestWithSpringBoot/getFileInfo/50c4c210-6f1b-42e0-a5b8-8f1d4a27668d
+
+Retrieve file contents:
+http://localhost:8080/RestWithSpringBoot/getFileContent/{fileid}
+http://localhost:8080/RestWithSpringBoot/getFileContent/6a3a150f-035a-45cd-b067-654cc4c973c6
+
+Database datafile save location: 
+F:/MyWork/h2db/h2database
+
+
+
