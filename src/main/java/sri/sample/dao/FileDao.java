@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import sri.sample.vo.FileInfo;
 import sri.sample.vo.FileMetaData;
@@ -98,14 +100,41 @@ public class FileDao
 			return null;
 		} finally
 		{
-			// TODO log message
 			closeConnections(con, stmt);
 		}
 	}
 	
-	public FileMetaData retrieveFileMetaData(String fileId)
+	public List<String> retrieveFilesList(String fileName)
 	{
-		return new FileMetaData();
+		Connection con = null;
+		Statement stmt = null;
+		List<String> fileNamesList = null;
+		try
+		{
+			Class.forName("org.h2.Driver");
+			con = DriverManager.getConnection("jdbc:h2:file:F:/MyWork/h2db/h2database"); 
+			stmt = con.createStatement();
+			
+			System.out.println("Retrieving file info from database...");
+			
+			String sql = "SELECT FILEID, FILENAME FROM FILEINFO WHERE FILENAME LIKE '%" + fileName + "%'";
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			fileNamesList = new ArrayList<String>();
+			while (rs.next())
+			{
+				fileNamesList.add(rs.getString("fileId") + " : " + rs.getString("fileName"));
+			}
+			System.out.println("Retrieving files list from database... done.");
+			return fileNamesList;
+		} catch (Exception e)
+		{
+			System.out.println("Exception retrieving files list from database: " + e.getMessage());
+			return null;
+		} finally
+		{
+			closeConnections(con, stmt);
+		}
 	}
 	
 	private void closeConnections(Connection con, Statement stmt)
