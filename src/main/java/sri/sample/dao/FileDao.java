@@ -2,8 +2,8 @@ package sri.sample.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,27 +29,27 @@ public class FileDao
 	public int saveFileInfo(FileInfo fileInfo)
 	{
 		Connection con = null;
-		Statement stmt = null;
+		PreparedStatement ps = null;
 		try
 		{
 			Class.forName("org.h2.Driver");
 			con = DriverManager.getConnection("jdbc:h2:file:F:/MyWork/h2db/h2database"); 
-			stmt = con.createStatement();
 			
 			logger.info("Saving file info to database...");
 			
 			String sql = "INSERT INTO FILEINFO "
 					+ "(fileId, fileName, owner, size, lastAccessTime, creationTime, lastModifiedTime)"
-					+ " VALUES ("
-					+ "'" + fileInfo.getFileId() + "' , "
-					+ "'" + fileInfo.getFileName() + "' , "
-					+ "'" + fileInfo.getFileMetaData().getOwner() + "' , "
-					+ fileInfo.getFileMetaData().getSize() + ", "
-					+ "'" + fileInfo.getFileMetaData().getCreationTime() + "', "
-					+ "'" + fileInfo.getFileMetaData().getLastModifiedTime() + "', "
-					+ "'" + fileInfo.getFileMetaData().getLastAccessTime() + "'"
-					+ ")";
-			stmt.execute(sql);
+					+ " VALUES ( ?, ?, ?, ?, ?, ?, ?) ";
+			ps = con.prepareStatement(sql);
+			ps.setString(1, fileInfo.getFileId());
+			ps.setString(2, fileInfo.getFileName());
+			ps.setString(3, fileInfo.getFileMetaData().getOwner());
+			ps.setLong(4, fileInfo.getFileMetaData().getSize());
+			ps.setTimestamp(5, fileInfo.getFileMetaData().getCreationTime());
+			ps.setTimestamp(6, fileInfo.getFileMetaData().getLastModifiedTime());
+			ps.setTimestamp(7, fileInfo.getFileMetaData().getLastAccessTime());
+			
+			ps.execute();
 			con.commit();
 			
 			logger.info("Saving file info to database... done.");
@@ -61,24 +61,25 @@ public class FileDao
 			return -1; 
 		} finally
 		{
-			closeConnections(con, stmt);
+			closeConnections(con, ps);
 		}
 	}
 	
 	public FileInfo retrieveFileInfo(String fileId)
 	{
 		Connection con = null;
-		Statement stmt = null;
+		PreparedStatement ps = null;
 		try
 		{
 			Class.forName("org.h2.Driver");
 			con = DriverManager.getConnection("jdbc:h2:file:F:/MyWork/h2db/h2database"); 
-			stmt = con.createStatement();
 			
 			logger.info("Retrieving file info from database...");
 			
-			String sql = "SELECT * FROM FILEINFO WHERE FILEID = '" + fileId + "'";
-			ResultSet rs = stmt.executeQuery(sql);
+			String sql = "SELECT * FROM FILEINFO WHERE FILEID = ?";
+			ps = con.prepareStatement(sql);
+			ps.setString(1, fileId);
+			ResultSet rs = ps.executeQuery();
 			
 			FileInfo fileInfo = new FileInfo();
 			if (rs.next())
@@ -105,25 +106,26 @@ public class FileDao
 			return null;
 		} finally
 		{
-			closeConnections(con, stmt);
+			closeConnections(con, ps);
 		}
 	}
 	
 	public List<String> retrieveFilesList(String fileName)
 	{
 		Connection con = null;
-		Statement stmt = null;
+		PreparedStatement ps = null;
 		List<String> fileNamesList = null;
 		try
 		{
 			Class.forName("org.h2.Driver");
 			con = DriverManager.getConnection("jdbc:h2:file:F:/MyWork/h2db/h2database"); 
-			stmt = con.createStatement();
 			
 			logger.info("Retrieving file info from database...");
 			
-			String sql = "SELECT FILEID, FILENAME FROM FILEINFO WHERE FILENAME LIKE '%" + fileName + "%'";
-			ResultSet rs = stmt.executeQuery(sql);
+			String sql = "SELECT FILEID, FILENAME FROM FILEINFO WHERE FILENAME LIKE ? ESCAPE '!' ";
+			ps = con.prepareStatement(sql);
+			ps.setString(1, "%" + fileName + "%");
+			ResultSet rs = ps.executeQuery();
 			
 			fileNamesList = new ArrayList<String>();
 			while (rs.next())
@@ -138,18 +140,18 @@ public class FileDao
 			return null;
 		} finally
 		{
-			closeConnections(con, stmt);
+			closeConnections(con, ps);
 		}
 	}
 	
-	private void closeConnections(Connection con, Statement stmt)
+	private void closeConnections(Connection con, PreparedStatement ps)
 	{
 		try
 		{
 			if (null != con)
 				con.close();
-			if (null != stmt)
-				stmt.close();
+			if (null != ps)
+				ps.close();
 		} catch(Exception e)
 		{
 			// let it pass
