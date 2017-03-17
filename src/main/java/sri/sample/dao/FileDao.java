@@ -7,6 +7,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sri.sample.vo.FileInfo;
 import sri.sample.vo.FileMetaData;
 
@@ -21,6 +24,8 @@ import sri.sample.vo.FileMetaData;
 
 public class FileDao
 {
+	public static final Logger logger = LoggerFactory.getLogger(FileDao.class);
+	
 	public int saveFileInfo(FileInfo fileInfo)
 	{
 		Connection con = null;
@@ -31,7 +36,7 @@ public class FileDao
 			con = DriverManager.getConnection("jdbc:h2:file:F:/MyWork/h2db/h2database"); 
 			stmt = con.createStatement();
 			
-			System.out.println("Saving file info to database...");
+			logger.info("Saving file info to database...");
 			
 			String sql = "INSERT INTO FILEINFO "
 					+ "(fileId, fileName, owner, size, lastAccessTime, creationTime, lastModifiedTime)"
@@ -47,12 +52,12 @@ public class FileDao
 			stmt.execute(sql);
 			con.commit();
 			
-			System.out.println("Saving file info to database... done.");
+			logger.info("Saving file info to database... done.");
 			
 			return 0;
 		} catch (Exception e)
 		{
-			System.out.println("Exception saving file info to database: " + e.getMessage());
+			logger.error("Exception saving file info to database: " + e.getMessage());
 			return -1; 
 		} finally
 		{
@@ -70,7 +75,7 @@ public class FileDao
 			con = DriverManager.getConnection("jdbc:h2:file:F:/MyWork/h2db/h2database"); 
 			stmt = con.createStatement();
 			
-			System.out.println("Retrieving file info from database...");
+			logger.info("Retrieving file info from database...");
 			
 			String sql = "SELECT * FROM FILEINFO WHERE FILEID = '" + fileId + "'";
 			ResultSet rs = stmt.executeQuery(sql);
@@ -90,13 +95,13 @@ public class FileDao
 				
 				fileInfo.setFileMetaData(metaData);
 			}
-			System.out.println("Retrieving file info from database... done.");
+			logger.info("Retrieving file info from database... done.");
 			
-			System.out.println("Returning info for the file: " + fileId + " -- " + fileInfo.getFileName());
+			logger.info("Returning info for the file: " + fileId + " -- " + fileInfo.getFileName());
 			return fileInfo;
 		} catch (Exception e)
 		{
-			System.out.println("Exception retrieving file info from database: " + e.getMessage());
+			logger.error("Exception retrieving file info from database: " + e.getMessage());
 			return null;
 		} finally
 		{
@@ -115,7 +120,7 @@ public class FileDao
 			con = DriverManager.getConnection("jdbc:h2:file:F:/MyWork/h2db/h2database"); 
 			stmt = con.createStatement();
 			
-			System.out.println("Retrieving file info from database...");
+			logger.info("Retrieving file info from database...");
 			
 			String sql = "SELECT FILEID, FILENAME FROM FILEINFO WHERE FILENAME LIKE '%" + fileName + "%'";
 			ResultSet rs = stmt.executeQuery(sql);
@@ -125,11 +130,11 @@ public class FileDao
 			{
 				fileNamesList.add(rs.getString("fileId") + " : " + rs.getString("fileName"));
 			}
-			System.out.println("Retrieving files list from database... done.");
+			logger.error("Retrieving files list from database... done.");
 			return fileNamesList;
 		} catch (Exception e)
 		{
-			System.out.println("Exception retrieving files list from database: " + e.getMessage());
+			logger.error("Exception retrieving files list from database: " + e.getMessage());
 			return null;
 		} finally
 		{
