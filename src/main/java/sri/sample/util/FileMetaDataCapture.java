@@ -1,6 +1,5 @@
 package sri.sample.util;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -9,6 +8,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileOwnerAttributeView;
 import java.sql.Timestamp;
 import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sri.sample.vo.FileMetaData;
 
@@ -19,6 +21,8 @@ import sri.sample.vo.FileMetaData;
 
 public class FileMetaDataCapture
 {
+	public static final Logger logger = LoggerFactory.getLogger(FileMetaDataCapture.class);
+	
 	public FileMetaData getFileMetaData(String fileWithPath)
 	{
 		try
@@ -42,19 +46,19 @@ public class FileMetaDataCapture
 			return fileMetaData;
 		}catch(Exception e)
 		{
-			System.out.println("Exception: " + e);
+			logger.error("Exception: " + e);
 			return null;
 		}
 	}
 	
-	public static void main(String[] args) throws IOException
-	{
-		FileMetaData metaData = new FileMetaDataCapture().getFileMetaData("C:\\Users\\Srinivas\\Desktop\\Srinivas C.docx");
-		
-		System.out.println(metaData.getOwner());
-		System.out.println(metaData.getSize());
-		System.out.println(metaData.getCreationTime());
-		System.out.println(metaData.getLastModifiedTime());
-		System.out.println(metaData.getLastAccessTime());
-	}
+//	public static void main(String[] args) throws Exception
+//	{
+//		FileMetaData metaData = new FileMetaDataCapture().getFileMetaData("C:\\Users\\Srinivas\\Desktop\\Srinivas C.docx");
+//		
+//		System.out.println(metaData.getOwner());
+//		System.out.println(metaData.getSize());
+//		System.out.println(metaData.getCreationTime());
+//		System.out.println(metaData.getLastModifiedTime());
+//		System.out.println(metaData.getLastAccessTime());
+//	}
 }
